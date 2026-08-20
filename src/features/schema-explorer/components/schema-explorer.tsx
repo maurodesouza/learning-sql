@@ -6,13 +6,15 @@ import {
   ChevronRight,
   Key,
   Link2,
+  RotateCw,
   Table2,
 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { Badge } from "#/components/atoms/badge";
+import { Button } from "#/components/atoms/button";
 import { ScrollArea } from "#/components/atoms/scroll-area";
-import { useQueryConsoleStore } from "#/features/query-console/context/query-console-context";
 import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import type { SchemaTable } from "#/lib/sql/types";
@@ -20,8 +22,6 @@ import { cn } from "#/lib/utils";
 import { schemaStore } from "#/stores/schema-store";
 
 export const SchemaExplorer = observer(function SchemaExplorer() {
-  const store = useQueryConsoleStore();
-  const { instanceId } = store;
   const schemaLoading = useTransition(["schema"]);
   const [search, setSearch] = useState("");
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
@@ -49,6 +49,16 @@ export const SchemaExplorer = observer(function SchemaExplorer() {
     });
   };
 
+  const handleTableClick = async (name: string) => {
+    const sql = `SELECT * FROM ${name} LIMIT 10;`;
+    try {
+      await navigator.clipboard.writeText(sql);
+      toast.success(`Copied \`${sql}\` to clipboard`);
+    } catch (_err) {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
   if (schemaLoading) {
     return (
       <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
@@ -67,7 +77,7 @@ export const SchemaExplorer = observer(function SchemaExplorer() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b p-3">
+      <div className="flex items-center gap-2 border-b p-3">
         <input
           type="text"
           placeholder="Search tables or columns..."
@@ -75,6 +85,17 @@ export const SchemaExplorer = observer(function SchemaExplorer() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() =>
+            actions.schema.refresh(undefined, { transition: ["schema"] })
+          }
+          disabled={schemaLoading}
+          title="Refresh schema"
+        >
+          <RotateCw className="h-4 w-4" />
+        </Button>
       </div>
       <ScrollArea className="flex-1">
         <div className="p-2">
@@ -84,9 +105,7 @@ export const SchemaExplorer = observer(function SchemaExplorer() {
               table={table}
               expanded={expandedTables.has(table.name)}
               onToggle={() => toggleTable(table.name)}
-              onTableClick={(name) =>
-                actions.queryConsole.selectTable(name, { instanceId })
-              }
+              onTableClick={handleTableClick}
             />
           ))}
           {filteredTables.length === 0 && (
@@ -145,7 +164,7 @@ function SchemaTableItem({
           type="button"
           onClick={() => onTableClick(table.name)}
           className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-          title={`SELECT * FROM ${table.name} LIMIT 10`}
+          title={`Copy SELECT * FROM ${table.name} LIMIT 10`}
         >
           <ChevronRight className="h-3 w-3" />
         </button>
