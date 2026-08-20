@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { Toaster } from "sonner";
 import { AppHeader } from "#/components/organisms/app-header";
-import { SchemaExplorer } from "#/components/organisms/schema-explorer";
+import { SchemaExplorer } from "#/features/schema-explorer";
 import { useTransition } from "#/hooks/use-transition";
 import { useQueryConsoleStore } from "../../context/query-console-context";
 import { EditorToolbar } from "../molecules/editor-toolbar";
