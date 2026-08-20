@@ -12,7 +12,8 @@ on the server, so you see both languages side by side — the fastest way to lea
 - **Dual-pane query console** — write PRQL on the left, SQL on the right, run whichever has focus
 - **PRQL → SQL compilation** on the server (`prqlc`), with a Transform action to compile without running
 - **Schema-aware SQL autocompletion** — table and column names from the live schema
-- **Schema explorer** — browse tables, columns, primary/foreign keys, and enum types
+- **Schema explorer** — browse tables, columns, primary/foreign keys, and enum types; click a table to copy its `SELECT` to the clipboard
+- **Multi-instance workspace** — dockable/resizable tabs (`flexlayout-react`) host any number of independent Query Console and Schema Explorer panels
 - **28 example queries** from beginner to advanced, all validated against the dataset
 - **Learning guide** with a concept checklist ([docs/learning-guide.md](docs/learning-guide.md))
 
@@ -42,10 +43,18 @@ lets you write PRQL pipelines; **Transform** (Ctrl/Cmd+E) compiles them to SQL.
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Browser (Next.js 16 + React 19)                     │
-│  ┌─────────────┐  ┌──────────────────────────────┐  │
-│  │ Schema      │  │ PRQL Editor │ SQL Editor      │  │
-│  │ Explorer    │  │ (CodeMirror 6) → Results Grid │  │
-│  └─────────────┘  └──────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────┐ │
+│  │ AppHeader (logo + title)                         │ │
+│  ├─────────────────────────────────────────────────┤ │
+│  │ Workspace (flexlayout-react dockable layout)     │ │
+│  │  ┌──────────────┐  ┌──────────────────────────┐ │ │
+│  │  │ Schema       │  │ Query Console (N tabs)   │ │ │
+│  │  │ Explorer(s)  │  │ PRQL │ SQL → Results Grid │ │ │
+│  │  │ copy SELECT  │  │ each tab = own store +   │ │ │
+│  │  │ to clipboard │  │ scoped command handlers  │ │ │
+│  │  └──────────────┘  └──────────────────────────┘ │ │
+│  │  [+ Add Query Console] [+ Add Schema Explorer]   │ │
+│  └─────────────────────────────────────────────────┘ │
 └──────────────────────┬──────────────────────────────┘
                        │ POST /api/query (read-only, sql | prql)
                        │ POST /api/prql/compile (PRQL → SQL, no DB)
