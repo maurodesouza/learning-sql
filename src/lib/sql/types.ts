@@ -1,10 +1,15 @@
 /** Shared types for the query console — imported by both the API and the UI. */
 
+import type { PrqlCompileErrorDetail } from "#/lib/prql/types";
+
+export type QueryLanguage = "sql" | "prql";
+
 export interface QueryRequest {
+  /** The query source. PRQL when `language` is `"prql"`, SQL otherwise. */
   sql: string;
   maxRows?: number;
-  /** Reserved for a future `language: 'sql' | 'prql'` dimension (PRQL Epic). */
-  language?: "sql";
+  /** Defaults to `"sql"`. `"prql"` is compiled to SQL before execution. */
+  language?: QueryLanguage;
 }
 
 export interface QueryColumn {
@@ -21,9 +26,12 @@ export interface QuerySuccess {
   truncated: boolean;
   command: string;
   notices: string[];
+  /** The SQL that actually ran. Only set when `language` was `"prql"`. */
+  compiledSql?: string;
 }
 
 export type ErrorKind =
+  | "PRQL_COMPILE_ERROR"
   | "SYNTAX_ERROR"
   | "PERMISSION_DENIED"
   | "TIMEOUT"
@@ -40,6 +48,8 @@ export interface QueryErrorDetail {
   hint: string | null;
   where: string | null;
   kind: ErrorKind;
+  /** Compiler detail — only set when `kind` is `"PRQL_COMPILE_ERROR"`. */
+  prql?: PrqlCompileErrorDetail;
 }
 
 export interface QueryErrorResponse {

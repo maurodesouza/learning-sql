@@ -6,3 +6,11 @@ onlyBuiltDependencies:
   - "@prisma/engines"
   - prisma
   - esbuild
+
+# CodeMirror breaks when two copies of @codemirror/state or @codemirror/view are
+# loaded, so every dependant must resolve to the same instance. The pins also keep
+# us off releases that are less than a week old.
+overrides:
+  "@codemirror/state": 6.7.1
+  "@codemirror/view": 6.43.8
+  "@codemirror/commands": 6.10.4
