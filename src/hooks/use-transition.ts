@@ -5,5 +5,6 @@ export function useTransition(key: unknown[]) {
   return useSyncExternalStore(
     (callback) => TransitionStore.getInstance().subscribe(callback),
     () => TransitionStore.getInstance().isExecuting(key),
+    () => false,
   );
 }
