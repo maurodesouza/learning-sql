@@ -3,11 +3,11 @@
 import { Database, Download, Loader2, Play, RotateCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Toaster, toast } from "sonner";
+import { CodeEditor } from "#/components/code-editor";
 import { ErrorDisplay } from "#/components/error-display";
 import { ExamplePicker } from "#/components/example-picker";
 import { ResultsGrid } from "#/components/results-grid";
 import { SchemaExplorer } from "#/components/schema-explorer";
-import { SqlEditor } from "#/components/sql-editor";
 import { Button } from "#/components/ui/button";
 import { Separator } from "#/components/ui/separator";
 import {
@@ -179,12 +179,15 @@ export function QueryConsole() {
           </div>
 
           {/* SQL editor */}
-          <div className="h-48 shrink-0 border-b">
-            <SqlEditor
+          <div className="h-48 shrink-0 overflow-hidden border-b">
+            <CodeEditor
+              language="sql"
               value={sql}
               onChange={setSql}
               onRun={handleRun}
+              schema={schema}
               disabled={loading}
+              placeholder="Enter SQL query... (Ctrl/Cmd+Enter to run)"
             />
           </div>
 

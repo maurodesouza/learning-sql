@@ -82,6 +82,21 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Editor syntax palette. The design tokens above are greyscale, so the
+     CodeMirror highlight style needs its own hues; keeping them here means the
+     editor still follows the light/dark class like everything else. */
+  --cm-selection: oklch(0.87 0.05 250);
+  --cm-keyword: oklch(0.5 0.19 285);
+  --cm-operator: oklch(0.55 0.12 25);
+  --cm-punctuation: oklch(0.55 0 0);
+  --cm-comment: oklch(0.6 0.03 145);
+  --cm-string: oklch(0.52 0.14 145);
+  --cm-escape: oklch(0.55 0.17 35);
+  --cm-number: oklch(0.55 0.15 60);
+  --cm-atom: oklch(0.52 0.16 15);
+  --cm-function: oklch(0.5 0.14 235);
+  --cm-type: oklch(0.5 0.12 195);
 }
 
 .dark {
@@ -116,6 +131,18 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --cm-selection: oklch(0.4 0.06 250);
+  --cm-keyword: oklch(0.76 0.14 300);
+  --cm-operator: oklch(0.78 0.11 25);
+  --cm-punctuation: oklch(0.7 0 0);
+  --cm-comment: oklch(0.62 0.03 145);
+  --cm-string: oklch(0.78 0.13 145);
+  --cm-escape: oklch(0.79 0.14 45);
+  --cm-number: oklch(0.83 0.12 85);
+  --cm-atom: oklch(0.75 0.14 15);
+  --cm-function: oklch(0.78 0.11 235);
+  --cm-type: oklch(0.8 0.1 195);
 }
 
 @layer base {
