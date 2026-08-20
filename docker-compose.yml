@@ -1,0 +1,44 @@
+# SQL Learning Lab — local PostgreSQL 18 instance.
+# Usage: docker compose up -d
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: learning-sql-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-learning}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-learning}
+      POSTGRES_DB: ${POSTGRES_DB:-learning_sql}
+      # Passed through to the init scripts so they can create the read-only role.
+      SQL_LAB_READONLY_PASSWORD: ${SQL_LAB_READONLY_PASSWORD:-readonly}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Postgres 18+ stores data in a version-specific subdirectory under
+      # /var/lib/postgresql, so we mount the parent (not .../data) to keep
+      # pg_upgrade --link usable across major versions.
+      - learning_sql_data:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-learning} -d ${POSTGRES_DB:-learning_sql}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Learning-friendly: log every statement so the user can watch their SQL in
+    # `docker compose logs -f db`.
+    command:
+      - "postgres"
+      - "-c"
+      - "log_statement=all"
+      - "-c"
+      - "log_min_duration_statement=0"
+      - "-c"
+      - "log_connections=on"
+
+volumes:
+  learning_sql_data:
+    name: learning_sql_data
