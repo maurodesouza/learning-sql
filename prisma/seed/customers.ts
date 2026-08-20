@@ -62,7 +62,7 @@ export async function seedCustomers(): Promise<{ ids: number[] }> {
     // Some near-duplicate names for DISTINCT lessons
     const email = faker.internet.email({ firstName, lastName }).toLowerCase();
     const birthDate = faker.datatype.boolean({ probability: 0.75 })
-      ? faker.date.birthdate({ mode: 'age', min: 18, max: 85 })
+      ? faker.date.birthdate({ mode: "age", min: 18, max: 85 })
       : null;
     const loyaltyTier = pick([...LOYALTY]);
     const tags = pickMany(TAGS_POOL, faker.number.int({ min: 0, max: 4 }));
@@ -131,7 +131,7 @@ export async function seedCustomers(): Promise<{ ids: number[] }> {
     const lastName = faker.person.lastName();
     const email = faker.internet.email({ firstName, lastName }).toLowerCase();
     const birthDate = faker.datatype.boolean({ probability: 0.75 })
-      ? faker.date.birthdate({ mode: 'age', min: 18, max: 85 })
+      ? faker.date.birthdate({ mode: "age", min: 18, max: 85 })
       : null;
     const loyaltyTier = pick([...LOYALTY]);
     const tags = pickMany(TAGS_POOL, faker.number.int({ min: 0, max: 4 }));
