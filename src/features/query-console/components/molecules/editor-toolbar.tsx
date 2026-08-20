@@ -6,6 +6,7 @@ import { Button } from "#/components/atoms/button";
 import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import { useQueryConsoleStore } from "../../context/query-console-context";
+import { ExamplePicker } from "../organisms/example-picker";
 
 export const EditorToolbar = observer(function EditorToolbar() {
   const store = useQueryConsoleStore();
@@ -32,6 +33,7 @@ export const EditorToolbar = observer(function EditorToolbar() {
         {store.runLabel}
       </Button>
       <span className="text-xs text-muted-foreground">Ctrl/Cmd+Enter</span>
+      <ExamplePicker />
       {store.canDownload && (
         <Button
           variant="ghost"
