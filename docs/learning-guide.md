@@ -18,7 +18,8 @@ This guide walks you through the SQL concepts you can practice in the SQL Learni
 12. [Advanced: Range Joins](#advanced-range)
 13. [Advanced: EXPLAIN and Query Plans](#advanced-explain)
 14. [Advanced: Materialized Views](#advanced-mv)
-15. [Concept Checklist](#checklist)
+15. [Writing PRQL](#writing-prql)
+16. [Concept Checklist](#checklist)
 
 ---
 
@@ -30,7 +31,8 @@ Open the query console at [http://localhost:3000](http://localhost:3000). The le
 - All queries run in a **read-only transaction** — you cannot modify data.
 - Only **one statement** at a time is allowed.
 - Results are capped at 1,000 rows by default (configurable).
-- Press **Ctrl/Cmd+Enter** to run a query.
+- Press **Ctrl/Cmd+Enter** to run the query in the pane that has focus (SQL or PRQL).
+- Press **Ctrl/Cmd+E** in the PRQL pane to compile PRQL to SQL without running it.
 
 ---
 
@@ -196,6 +198,48 @@ Join tables where the match condition is a range, not equality.
 | Concept | Example | What you learn |
 |---------|---------|----------------|
 | MV query | "Materialized view: monthly seller revenue" | Querying pre-computed aggregations |
+
+---
+
+## Writing PRQL
+
+The console has two editors side by side: **PRQL** on the left, **SQL** on the right.
+PRQL is a pipelined language that compiles to SQL — writing the same query both ways is
+one of the fastest ways to understand what SQL is actually doing.
+
+### Try it
+
+1. The PRQL pane starts with `from sellers | take 10`. Click into it and press
+   **Ctrl/Cmd+Enter** to run it. The SQL pane fills with the compiled `SELECT … LIMIT 10`
+   and the results appear below.
+2. Press **Ctrl/Cmd+E** (or the **Transform** button) to compile the PRQL into the SQL
+   pane *without* running it — handy for seeing what a pipeline produces.
+3. Write a filter:
+
+```prql
+from sellers
+filter rating > 4.5 && is_active
+select { name, country, rating }
+sort {-rating}
+take 10
+```
+
+Press Transform and read the SQL it produced. Then run it from either pane.
+
+### What to know
+
+- **Run** executes whichever pane has focus. The focused pane is outlined.
+- Running PRQL back-fills the SQL pane with the compiled query, so you always see what
+  actually ran.
+- PRQL compile errors show the reason, hints, and the `line:column` of the failure —
+  they never reach Postgres.
+- Only **PRQL → SQL** exists. There is no SQL → PRQL conversion (the PRQL project lists
+  it as a long-term goal with no implementation yet).
+
+### Learning more
+
+- [The PRQL Book](https://prql-lang.org/book/) — the official language tutorial and reference
+- [PRQL Playground](https://prql-lang.org/playground/) — try PRQL in the browser
 
 ---
 
