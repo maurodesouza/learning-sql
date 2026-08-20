@@ -1,17 +1,16 @@
 "use client";
 
 import { BookOpen, ChevronDown } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import { useState } from "react";
+import { actions } from "#/lib/command";
 import {
   EXAMPLE_QUERIES,
   type ExampleDifficulty,
   type ExampleQuery,
 } from "#/lib/sql/examples";
 import { cn } from "#/lib/utils";
-
-interface ExamplePickerProps {
-  onSelect: (query: ExampleQuery) => void;
-}
+import { useQueryConsoleStore } from "../../context/query-console-context";
 
 const DIFFICULTY_COLORS: Record<ExampleDifficulty, string> = {
   beginner: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
@@ -20,7 +19,9 @@ const DIFFICULTY_COLORS: Record<ExampleDifficulty, string> = {
     "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
 };
 
-export function ExamplePicker({ onSelect }: ExamplePickerProps) {
+export const ExamplePicker = observer(function ExamplePicker() {
+  const store = useQueryConsoleStore();
+  const { instanceId } = store;
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,12 +44,12 @@ export function ExamplePicker({ onSelect }: ExamplePickerProps) {
             onClick={() => setOpen(false)}
           />
           <div className="absolute left-0 top-full z-50 mt-1 max-h-96 w-80 overflow-auto rounded-md border bg-popover p-1 shadow-md">
-            {EXAMPLE_QUERIES.map((query) => (
+            {EXAMPLE_QUERIES.map((query: ExampleQuery) => (
               <button
                 key={query.id}
                 type="button"
                 onClick={() => {
-                  onSelect(query);
+                  actions.queryConsole.selectExample(query, { instanceId });
                   setOpen(false);
                 }}
                 className="flex w-full flex-col gap-1 rounded p-2 text-left text-sm hover:bg-accent"
@@ -74,4 +75,4 @@ export function ExamplePicker({ onSelect }: ExamplePickerProps) {
       )}
     </div>
   );
-}
+});
