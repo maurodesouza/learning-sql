@@ -1,0 +1,22 @@
+// Prisma schema — source of truth for the marketplace data model.
+// Models are added in #3. The generator + datasource are established here so
+// `prisma generate` / `prisma migrate dev` work end-to-end.
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  // Next.js / Turbopack bundler needs extension-less imports.
+  importFileExtension = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// A throwaway model so the generator has something to emit before #3 lands.
+// Removed in #3 when the real data model is added.
+model Placeholder {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("placeholder")
+}
