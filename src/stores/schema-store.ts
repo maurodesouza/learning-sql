@@ -1,28 +1,21 @@
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, observable } from "mobx";
 import type { SchemaIntrospection } from "#/lib/sql/types";
 
 export class SchemaStore {
-  schema: SchemaIntrospection | null = null;
-  schemaLoading = false;
+  @observable accessor schema: SchemaIntrospection | null = null;
+  @observable accessor schemaLoading = false;
 
-  constructor() {
-    makeObservable(this, {
-      schema: observable.ref,
-      schemaLoading: observable,
-      hasSchema: computed,
-      setSchema: action,
-      setSchemaLoading: action,
-    });
-  }
-
+  @computed
   get hasSchema(): boolean {
     return this.schema !== null;
   }
 
+  @action
   setSchema(schema: SchemaIntrospection | null) {
     this.schema = schema;
   }
 
+  @action
   setSchemaLoading(loading: boolean) {
     this.schemaLoading = loading;
   }
