@@ -106,7 +106,7 @@ LIMIT 20;`,
     title: "Window functions: ROW_NUMBER",
     difficulty: "intermediate",
     description: "Rank rows within partitions using ROW_NUMBER.",
-    sql: `SELECT seller_id, product_id, name,
+    sql: `SELECT seller_id, id AS product_id, name,
        ROW_NUMBER() OVER (PARTITION BY seller_id ORDER BY base_price DESC) AS rank
 FROM products
 WHERE is_published = true
