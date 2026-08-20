@@ -12,8 +12,6 @@ export class QueryConsoleStore {
   @observable accessor prql = DEFAULT_PRQL;
   @observable accessor activePane: QueryLanguage = "sql";
   @observable accessor result: QueryResponse | null = null;
-  @observable accessor loading = false;
-  @observable accessor transforming = false;
   @observable accessor history: HistoryEntry[] = [];
 
   constructor(instanceId: string) {
@@ -27,10 +25,7 @@ export class QueryConsoleStore {
 
   @computed
   get runDisabled(): boolean {
-    return (
-      this.loading ||
-      (this.activePane === "prql" ? !this.prql.trim() : !this.sql.trim())
-    );
+    return this.activePane === "prql" ? !this.prql.trim() : !this.sql.trim();
   }
 
   @computed
@@ -71,16 +66,6 @@ export class QueryConsoleStore {
   @action
   setResult(result: QueryResponse | null) {
     this.result = result;
-  }
-
-  @action
-  setLoading(loading: boolean) {
-    this.loading = loading;
-  }
-
-  @action
-  setTransforming(transforming: boolean) {
-    this.transforming = transforming;
   }
 
   @action

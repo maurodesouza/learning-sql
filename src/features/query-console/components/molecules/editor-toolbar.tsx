@@ -3,21 +3,28 @@
 import { Download, Loader2, Play } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { Button } from "#/components/atoms/button";
+import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import { useQueryConsoleStore } from "../../context/query-console-context";
 
 export const EditorToolbar = observer(function EditorToolbar() {
   const store = useQueryConsoleStore();
   const { instanceId } = store;
+  const loading = useTransition(["queryConsole.run", instanceId]);
 
   return (
     <div className="flex items-center gap-2 border-b px-3 py-1.5">
       <Button
-        onClick={() => actions.queryConsole.run(undefined, { instanceId })}
-        disabled={store.runDisabled}
+        onClick={() =>
+          actions.queryConsole.run(undefined, {
+            instanceId,
+            transition: ["queryConsole.run", instanceId],
+          })
+        }
+        disabled={store.runDisabled || loading}
         size="sm"
       >
-        {store.loading ? (
+        {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
           <Play className="h-4 w-4" />

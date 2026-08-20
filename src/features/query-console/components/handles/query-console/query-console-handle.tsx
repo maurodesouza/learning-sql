@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { command } from "#/lib/command";
 import {
@@ -24,13 +24,15 @@ export function QueryConsoleHandle({
   children,
 }: QueryConsoleHandleProps) {
   const store = useMemo(() => new QueryConsoleStore(instanceId), [instanceId]);
+  const runningRef = useRef(false);
+  const transformingRef = useRef(false);
 
   async function handleRun() {
     const pane = store.activePane;
     const source = pane === "prql" ? store.prql : store.sql;
-    if (!source.trim() || store.loading) return;
+    if (!source.trim() || runningRef.current) return;
 
-    store.setLoading(true);
+    runningRef.current = true;
     try {
       const res = await runQuery(
         pane === "prql"
@@ -48,13 +50,14 @@ export function QueryConsoleHandle({
     } catch (_err) {
       toast.error("Network error — is the server running?");
     } finally {
-      store.setLoading(false);
+      runningRef.current = false;
     }
   }
 
   async function handleTransform() {
-    if (!store.prql.trim() || store.transforming || store.loading) return;
-    store.setTransforming(true);
+    if (!store.prql.trim() || transformingRef.current || runningRef.current)
+      return;
+    transformingRef.current = true;
     try {
       const res = await compilePrql(store.prql);
       if (isPrqlCompileSuccess(res)) {
@@ -79,7 +82,7 @@ export function QueryConsoleHandle({
     } catch (_err) {
       toast.error("Network error — is the server running?");
     } finally {
-      store.setTransforming(false);
+      transformingRef.current = false;
     }
   }
 

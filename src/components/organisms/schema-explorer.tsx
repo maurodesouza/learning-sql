@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "#/components/atoms/badge";
 import { ScrollArea } from "#/components/atoms/scroll-area";
 import { useQueryConsoleStore } from "#/features/query-console/context/query-console-context";
+import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import type { SchemaTable } from "#/lib/sql/types";
 import { cn } from "#/lib/utils";
@@ -21,6 +22,7 @@ import { schemaStore } from "#/stores/schema-store";
 export const SchemaExplorer = observer(function SchemaExplorer() {
   const store = useQueryConsoleStore();
   const { instanceId } = store;
+  const schemaLoading = useTransition(["schema"]);
   const [search, setSearch] = useState("");
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
 
@@ -47,7 +49,7 @@ export const SchemaExplorer = observer(function SchemaExplorer() {
     });
   };
 
-  if (schemaStore.schemaLoading) {
+  if (schemaLoading) {
     return (
       <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
         Loading schema...

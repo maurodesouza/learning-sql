@@ -9,6 +9,7 @@
 import { ArrowRight, Loader2, Wand2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { Button } from "#/components/atoms/button";
+import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import type { QueryLanguage } from "#/lib/sql/types";
 import { useQueryConsoleStore } from "../../context/query-console-context";
@@ -18,6 +19,8 @@ import { CodeEditor } from "./code-editor";
 export const EditorSplit = observer(function EditorSplit() {
   const store = useQueryConsoleStore();
   const { instanceId } = store;
+  const transforming = useTransition(["queryConsole.transform", instanceId]);
+  const running = useTransition(["queryConsole.run", instanceId]);
 
   return (
     <div className="flex h-full min-h-0 flex-1 overflow-hidden">
@@ -32,14 +35,15 @@ export const EditorSplit = observer(function EditorSplit() {
                 variant="ghost"
                 size="sm"
                 onClick={() =>
-                  actions.queryConsole.transform(undefined, { instanceId })
+                  actions.queryConsole.transform(undefined, {
+                    instanceId,
+                    transition: ["queryConsole.transform", instanceId],
+                  })
                 }
-                disabled={
-                  store.transforming || store.loading || !store.prql.trim()
-                }
+                disabled={transforming || running || !store.prql.trim()}
                 className="h-6 gap-1 px-2 text-xs"
               >
-                {store.transforming ? (
+                {transforming ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
                   <Wand2 className="h-3.5 w-3.5" />

@@ -15,6 +15,7 @@ import { tags } from "@lezer/highlight";
 import CodeMirror from "@uiw/react-codemirror";
 import { observer } from "mobx-react-lite";
 import { useMemo, useRef } from "react";
+import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import { prql } from "#/lib/prql/codemirror";
 import type { QueryLanguage } from "#/lib/sql/types";
@@ -134,7 +135,7 @@ export const CodeEditor = observer(function CodeEditor({
   const { instanceId } = store;
 
   const value = language === "prql" ? store.prql : store.sql;
-  const disabled = store.loading;
+  const disabled = useTransition(["queryConsole.run", instanceId]);
 
   const languageExtension = useMemo(
     () =>
@@ -152,15 +153,29 @@ export const CodeEditor = observer(function CodeEditor({
   // therefore the whole extension array — referentially stable, so CodeMirror
   // is never reconfigured while typing.
   const handlers = useRef({
-    onRun: () => actions.queryConsole.run(undefined, { instanceId }),
+    onRun: () =>
+      actions.queryConsole.run(undefined, {
+        instanceId,
+        transition: ["queryConsole.run", instanceId],
+      }),
     onTransform: () =>
-      actions.queryConsole.transform(undefined, { instanceId }),
+      actions.queryConsole.transform(undefined, {
+        instanceId,
+        transition: ["queryConsole.transform", instanceId],
+      }),
     disabled,
   });
   handlers.current = {
-    onRun: () => actions.queryConsole.run(undefined, { instanceId }),
+    onRun: () =>
+      actions.queryConsole.run(undefined, {
+        instanceId,
+        transition: ["queryConsole.run", instanceId],
+      }),
     onTransform: () =>
-      actions.queryConsole.transform(undefined, { instanceId }),
+      actions.queryConsole.transform(undefined, {
+        instanceId,
+        transition: ["queryConsole.transform", instanceId],
+      }),
     disabled,
   };
 

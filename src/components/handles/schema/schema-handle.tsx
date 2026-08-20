@@ -2,32 +2,27 @@
 
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { command } from "#/lib/command";
+import { actions, command } from "#/lib/command";
 import { fetchSchema } from "#/lib/sql/client";
 import { schemaStore } from "#/stores/schema-store";
 import "./schema-actions";
 
 export function SchemaHandle() {
   async function handleFetch() {
-    schemaStore.setSchemaLoading(true);
     try {
       const s = await fetchSchema();
       schemaStore.setSchema(s);
-      schemaStore.setSchemaLoading(false);
     } catch (_err) {
-      schemaStore.setSchemaLoading(false);
+      // Schema fetch failures are surfaced via the empty-schema state in the UI.
     }
   }
 
   async function handleRefresh() {
-    schemaStore.setSchemaLoading(true);
     try {
       const s = await fetchSchema();
       schemaStore.setSchema(s);
-      schemaStore.setSchemaLoading(false);
       toast.success("Schema refreshed");
     } catch (_err) {
-      schemaStore.setSchemaLoading(false);
       toast.error("Failed to refresh schema");
     }
   }
@@ -39,8 +34,9 @@ export function SchemaHandle() {
       command.handle("schema.refresh", handleRefresh),
     ];
 
-    // Load schema on mount
-    handleFetch();
+    // Load schema on mount — dispatch through the actions proxy so the
+    // shared ["schema"] transition is tracked by useTransition.
+    actions.schema.fetch(undefined, { transition: ["schema"] });
 
     return () => {
       for (const dispose of disposes) dispose();

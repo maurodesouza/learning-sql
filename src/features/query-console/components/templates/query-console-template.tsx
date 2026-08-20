@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { Toaster } from "sonner";
 import { AppHeader } from "#/components/organisms/app-header";
 import { SchemaExplorer } from "#/components/organisms/schema-explorer";
+import { useTransition } from "#/hooks/use-transition";
 import { useQueryConsoleStore } from "../../context/query-console-context";
 import { EditorToolbar } from "../molecules/editor-toolbar";
 import { EditorSplit } from "../organisms/editor-split";
@@ -13,6 +14,8 @@ import { ResultsGrid } from "../organisms/results-grid";
 
 export const QueryConsoleTemplate = observer(function QueryConsoleTemplate() {
   const store = useQueryConsoleStore();
+  const { instanceId } = store;
+  const loading = useTransition(["queryConsole.run", instanceId]);
 
   return (
     <div className="flex h-screen flex-col">
@@ -37,7 +40,7 @@ export const QueryConsoleTemplate = observer(function QueryConsoleTemplate() {
 
           {/* Results panel */}
           <div className="flex-1 overflow-hidden">
-            {store.loading ? (
+            {loading ? (
               <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>

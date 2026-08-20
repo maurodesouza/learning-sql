@@ -3,7 +3,6 @@ import type { SchemaIntrospection } from "#/lib/sql/types";
 
 export class SchemaStore {
   @observable accessor schema: SchemaIntrospection | null = null;
-  @observable accessor schemaLoading = false;
 
   @computed
   get hasSchema(): boolean {
@@ -13,11 +12,6 @@ export class SchemaStore {
   @action
   setSchema(schema: SchemaIntrospection | null) {
     this.schema = schema;
-  }
-
-  @action
-  setSchemaLoading(loading: boolean) {
-    this.schemaLoading = loading;
   }
 }
 
