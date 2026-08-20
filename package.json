@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "up": "docker compose up -d",
+    "down": "docker compose down",
     "lint": "biome check",
     "format": "biome format --write",
     "typecheck": "tsc --noEmit",
