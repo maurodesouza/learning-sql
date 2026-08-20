@@ -8,36 +8,32 @@ import {
   Link2,
   Table2,
 } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 import { Badge } from "#/components/atoms/badge";
 import { ScrollArea } from "#/components/atoms/scroll-area";
-import type { SchemaIntrospection, SchemaTable } from "#/lib/sql/types";
+import { useQueryConsoleStore } from "#/features/query-console/context/query-console-context";
+import { actions } from "#/lib/command";
+import type { SchemaTable } from "#/lib/sql/types";
 import { cn } from "#/lib/utils";
+import { schemaStore } from "#/stores/schema-store";
 
-interface SchemaExplorerProps {
-  schema: SchemaIntrospection | null;
-  loading: boolean;
-  onTableClick: (tableName: string) => void;
-}
-
-export function SchemaExplorer({
-  schema,
-  loading,
-  onTableClick,
-}: SchemaExplorerProps) {
+export const SchemaExplorer = observer(function SchemaExplorer() {
+  const store = useQueryConsoleStore();
+  const { instanceId } = store;
   const [search, setSearch] = useState("");
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
 
   const filteredTables = useMemo(() => {
-    if (!schema) return [];
-    if (!search) return schema.tables;
+    if (!schemaStore.schema) return [];
+    if (!search) return schemaStore.schema.tables;
     const q = search.toLowerCase();
-    return schema.tables.filter(
+    return schemaStore.schema.tables.filter(
       (t) =>
         t.name.toLowerCase().includes(q) ||
         t.columns.some((c) => c.name.toLowerCase().includes(q)),
     );
-  }, [schema, search]);
+  }, [search]);
 
   const toggleTable = (name: string) => {
     setExpandedTables((prev) => {
@@ -51,7 +47,7 @@ export function SchemaExplorer({
     });
   };
 
-  if (loading) {
+  if (schemaStore.schemaLoading) {
     return (
       <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
         Loading schema...
@@ -59,7 +55,7 @@ export function SchemaExplorer({
     );
   }
 
-  if (!schema) {
+  if (!schemaStore.schema) {
     return (
       <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
         Failed to load schema
@@ -86,7 +82,9 @@ export function SchemaExplorer({
               table={table}
               expanded={expandedTables.has(table.name)}
               onToggle={() => toggleTable(table.name)}
-              onTableClick={onTableClick}
+              onTableClick={(name) =>
+                actions.queryConsole.selectTable(name, { instanceId })
+              }
             />
           ))}
           {filteredTables.length === 0 && (
@@ -96,10 +94,12 @@ export function SchemaExplorer({
           )}
         </div>
       </ScrollArea>
-      {schema.enums.length > 0 && <EnumList enums={schema.enums} />}
+      {schemaStore.schema.enums.length > 0 && (
+        <EnumList enums={schemaStore.schema.enums} />
+      )}
     </div>
   );
-}
+});
 
 function SchemaTableItem({
   table,

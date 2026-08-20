@@ -8,7 +8,9 @@ import {
   Lock,
   Terminal,
 } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import type { QueryErrorDetail } from "#/lib/sql/types";
+import { useQueryConsoleStore } from "../../context/query-console-context";
 
 const KIND_CONFIG: Record<
   string,
@@ -43,7 +45,13 @@ const KIND_CONFIG: Record<
   UNKNOWN: { icon: AlertCircle, label: "Error", color: "text-red-500" },
 };
 
-export function ErrorDisplay({ error }: { error: QueryErrorDetail }) {
+export const ErrorDisplay = observer(function ErrorDisplay() {
+  const store = useQueryConsoleStore();
+  const result = store.result;
+
+  if (!result || !("error" in result)) return null;
+
+  const error: QueryErrorDetail = result.error;
   const config = KIND_CONFIG[error.kind] ?? KIND_CONFIG.UNKNOWN;
   const Icon = config.icon;
   const isPrql = error.kind === "PRQL_COMPILE_ERROR";
@@ -105,7 +113,7 @@ export function ErrorDisplay({ error }: { error: QueryErrorDetail }) {
       )}
     </div>
   );
-}
+});
 
 /** PRQL compiler output: reason, hints, and an annotated snippet. */
 function PrqlErrorBody({

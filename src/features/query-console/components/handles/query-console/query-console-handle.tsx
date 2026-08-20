@@ -11,7 +11,7 @@ import {
 import { isQueryError, isQuerySuccess, runQuery } from "#/lib/sql/client";
 import type { ExampleQuery } from "#/lib/sql/examples";
 import type { QueryLanguage } from "#/lib/sql/types";
-import "../actions/query-console-actions";
+import "../../../actions/query-console-actions";
 import { QueryConsoleContext } from "../../../context/query-console-context";
 import { QueryConsoleStore } from "../../../stores/query-console-store";
 
