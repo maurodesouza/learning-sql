@@ -14,8 +14,8 @@
  */
 import { ArrowRight, Loader2, Wand2 } from "lucide-react";
 import { useCallback } from "react";
+import { Button } from "#/components/atoms/button";
 import { CodeEditor } from "#/components/code-editor";
-import { Button } from "#/components/ui/button";
 import type { QueryLanguage, SchemaIntrospection } from "#/lib/sql/types";
 
 interface EditorSplitProps {

@@ -3,13 +3,13 @@
 import { Database, Download, Loader2, Play, RotateCw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "sonner";
+import { Button } from "#/components/atoms/button";
+import { Separator } from "#/components/atoms/separator";
 import { EditorSplit } from "#/components/editor-split";
 import { ErrorDisplay } from "#/components/error-display";
 import { ExamplePicker } from "#/components/example-picker";
 import { ResultsGrid } from "#/components/results-grid";
 import { SchemaExplorer } from "#/components/schema-explorer";
-import { Button } from "#/components/ui/button";
-import { Separator } from "#/components/ui/separator";
 import {
   compilePrql,
   isPrqlCompileError,

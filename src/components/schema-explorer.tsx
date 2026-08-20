@@ -9,8 +9,8 @@ import {
   Table2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Badge } from "#/components/ui/badge";
-import { ScrollArea } from "#/components/ui/scroll-area";
+import { Badge } from "#/components/atoms/badge";
+import { ScrollArea } from "#/components/atoms/scroll-area";
 import type { SchemaIntrospection, SchemaTable } from "#/lib/sql/types";
 import { cn } from "#/lib/utils";
 

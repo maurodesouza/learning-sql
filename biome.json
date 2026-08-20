@@ -14,7 +14,11 @@
       "!dist",
       "!build",
       "!src/generated",
-      "!prisma/migrations"
+      "!prisma/migrations",
+      "!src/lib/command",
+      "!src/types/helpers.ts",
+      "!src/utils/dev",
+      "!src/hooks/use-transition.ts"
     ]
   },
   "formatter": {

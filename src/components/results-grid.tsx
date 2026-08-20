@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { type Column, DataGrid } from "react-data-grid";
-import { Badge } from "#/components/ui/badge";
+import { Badge } from "#/components/atoms/badge";
 import type { QuerySuccess } from "#/lib/sql/types";
 
 interface ResultsGridProps {
