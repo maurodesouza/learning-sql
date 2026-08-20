@@ -147,4 +147,93 @@ describe("executeQuery integration", () => {
     if ("error" in result) return;
     expect(result.columns).toHaveLength(2);
   });
+
+  it("leaves compiledSql unset for plain SQL", async () => {
+    const result = await executeQuery({ sql: "SELECT 1 AS one" });
+    expect("error" in result).toBe(false);
+    if ("error" in result) return;
+    expect(result.compiledSql).toBeUndefined();
+  });
+});
+
+describe("executeQuery with language: prql", () => {
+  it("compiles and executes a PRQL pipeline", async () => {
+    const result = await executeQuery({
+      language: "prql",
+      sql: "from sellers | take 5",
+    });
+    expect("error" in result).toBe(false);
+    if ("error" in result) return;
+    expect(result.rows.length).toBeGreaterThan(0);
+    expect(result.rows.length).toBeLessThanOrEqual(5);
+    expect(result.compiledSql).toMatch(/FROM\s+sellers/i);
+    expect(result.command).toBe("SELECT");
+  });
+
+  it("honours maxRows on the compiled SQL", async () => {
+    const result = await executeQuery({
+      language: "prql",
+      sql: "from order_items | take 100",
+      maxRows: 3,
+    });
+    expect("error" in result).toBe(false);
+    if ("error" in result) return;
+    expect(result.rows).toHaveLength(3);
+    expect(result.truncated).toBe(true);
+  });
+
+  it("reports a PRQL syntax error without touching Postgres", async () => {
+    const result = await executeQuery({
+      language: "prql",
+      sql: "from sellers | foo bar",
+    });
+    expect("error" in result).toBe(true);
+    if (!("error" in result)) return;
+    expect(result.error.kind).toBe("PRQL_COMPILE_ERROR");
+    // A Postgres error would carry a SQLSTATE; a compile error must not.
+    expect(result.error.code).toBeNull();
+    expect(result.error.prql?.reason).toBeTruthy();
+    expect(result.error.prql?.location?.startLine).toBe(1);
+  });
+
+  it("rejects an unknown language instead of running it as SQL", async () => {
+    const result = await executeQuery({
+      // Simulates a hand-crafted request body.
+      language: "javascript" as never,
+      sql: "SELECT 1",
+    });
+    expect("error" in result).toBe(true);
+    if (!("error" in result)) return;
+    expect(result.error.kind).toBe("INPUT_INVALID");
+  });
+
+  it("rejects empty PRQL as a compile error", async () => {
+    const result = await executeQuery({ language: "prql", sql: "   " });
+    expect("error" in result).toBe(true);
+    if (!("error" in result)) return;
+    expect(result.error.kind).toBe("PRQL_COMPILE_ERROR");
+  });
+
+  it("runs compiled SQL inside the read-only transaction", async () => {
+    // s-strings are PRQL's SQL escape hatch, so compiled output is as untrusted
+    // as hand-written SQL. `nextval()` mutates sequence state and is rejected by
+    // a READ ONLY transaction, proving the compiled SQL does not bypass it.
+    const result = await executeQuery({
+      language: "prql",
+      sql: `from sellers | select { x = s"nextval('carts_id_seq')" } | take 1`,
+    });
+    expect("error" in result).toBe(true);
+    if (!("error" in result)) return;
+    expect(result.error.kind).toBe("READ_ONLY_VIOLATION");
+  });
+
+  it("still enforces single-statement execution on compiled SQL", async () => {
+    const result = await executeQuery({
+      language: "prql",
+      sql: `from s"SELECT 1 AS a; SELECT 2 AS b"`,
+    });
+    expect("error" in result).toBe(true);
+    if (!("error" in result)) return;
+    expect(result.error.kind).toBe("MULTI_STATEMENT");
+  });
 });

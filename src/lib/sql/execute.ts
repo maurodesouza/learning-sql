@@ -51,8 +51,34 @@ async function loadTypeNames(): Promise<Map<number, string>> {
 }
 
 export async function executeQuery(req: QueryRequest): Promise<QueryResponse> {
-  const { sql, maxRows: requestedMaxRows } = req;
+  const { maxRows: requestedMaxRows, language = "sql" } = req;
   const maxRows = Math.min(requestedMaxRows ?? env.queryMaxRows, HARD_MAX_ROWS);
+
+  // An unknown language must not silently fall through and run as SQL.
+  if (language !== "sql" && language !== "prql") {
+    return errorResponse(
+      `Unsupported language "${String(language)}". Use "sql" or "prql".`,
+      "INPUT_INVALID",
+    );
+  }
+
+  // PRQL is compiled first; the resulting SQL then goes through the unchanged
+  // guard + read-only path below. A compile failure never reaches the database.
+  let sql = req.sql;
+  let compiledSql: string | undefined;
+  if (language === "prql") {
+    // Lazy import: `#/lib/prql/compile` pulls in the server-only wasm compiler,
+    // which must stay off the module graph of the SQL-only callers.
+    const { compilePrql } = await import("#/lib/prql/compile");
+    const compiled = await compilePrql(req.sql);
+    if ("error" in compiled) {
+      const error = errorResponse(compiled.error.reason, "PRQL_COMPILE_ERROR");
+      error.error.prql = compiled.error;
+      return error;
+    }
+    sql = compiled.sql;
+    compiledSql = compiled.sql;
+  }
 
   // Input validation
   const validation = validateInput(sql, requestedMaxRows);
@@ -119,6 +145,7 @@ export async function executeQuery(req: QueryRequest): Promise<QueryResponse> {
       truncated,
       command: result.command,
       notices,
+      ...(compiledSql !== undefined && { compiledSql }),
     };
 
     return success;
