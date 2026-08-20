@@ -55,6 +55,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      flexlayout-react:
+        specifier: ^0.10.5
+        version: 0.10.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react:
         specifier: ^1.33.0
         version: 1.33.0(react@19.2.8)
@@ -1847,6 +1850,13 @@ packages:
   find-up@3.0.0:
     resolution: {integrity: sha512-1yD6RmLI1XBfxugvORwlck6f75tYL+iR0jqwsOrOxMZyGYqUuDhJ0l4AXdO1iX/FTs9cBAMEk1gWSEx1kSbylg==}
     engines: {node: '>=6'}
+
+  flexlayout-react@0.10.5:
+    resolution: {integrity: sha512-VP2AGJxERKeECmW1xHFnJRm3tl7wsFUl/o4XLAmaExGmpr30/kn41yDRpYtZW5RiGstNqZ1l6e96UdSYnwNYfw==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   foreground-child@3.3.1:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
@@ -4848,6 +4858,11 @@ snapshots:
   find-up@3.0.0:
     dependencies:
       locate-path: 3.0.0
+
+  flexlayout-react@0.10.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   foreground-child@3.3.1:
     dependencies:

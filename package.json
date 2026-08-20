@@ -37,6 +37,7 @@
     "@uiw/react-codemirror": "^4.25.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "flexlayout-react": "^0.10.5",
     "lucide-react": "^1.33.0",
     "mobx": "7.0.3",
     "mobx-react-lite": "5.0.3",
