@@ -1,6 +1,10 @@
 // Prisma schema — source of truth for the marketplace data model.
 // ~20 tables covering the full SQL learning checklist.
 // Naming: snake_case via @@map/@map, plural table names, surrogate id keys.
+//
+// Multi-schema: the marketplace data lives in the `public` schema, while the
+// Challenges feature (challenges, hints, progress) lives in a dedicated `lab`
+// schema that the read-only query-console role cannot see (see docs/plan.md §2).
 generator client {
   provider            = "prisma-client"
   output              = "../src/generated/prisma"
@@ -9,6 +13,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["public", "lab"]
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
@@ -18,11 +23,15 @@ enum LoyaltyTier {
   SILVER
   GOLD
   PLATINUM
+
+  @@schema("public")
 }
 
 enum AddressType {
   BILLING
   SHIPPING
+
+  @@schema("public")
 }
 
 enum OrderStatus {
@@ -32,12 +41,16 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
   REFUNDED
+
+  @@schema("public")
 }
 
 enum OrderChannel {
   WEB
   MOBILE
   MARKETPLACE_APP
+
+  @@schema("public")
 }
 
 enum PaymentMethod {
@@ -46,6 +59,8 @@ enum PaymentMethod {
   BOLETO
   PAYPAL
   WALLET
+
+  @@schema("public")
 }
 
 enum PaymentStatus {
@@ -55,6 +70,8 @@ enum PaymentStatus {
   FAILED
   REFUNDED
   PARTIALLY_REFUNDED
+
+  @@schema("public")
 }
 
 enum ReturnReason {
@@ -64,6 +81,8 @@ enum ReturnReason {
   CHANGED_MIND
   DAMAGED_IN_TRANSIT
   LATE_DELIVERY
+
+  @@schema("public")
 }
 
 enum ReturnStatus {
@@ -72,11 +91,15 @@ enum ReturnStatus {
   REJECTED
   REFUNDED
   EXCHANGED
+
+  @@schema("public")
 }
 
 enum DiscountType {
   PERCENT
   FIXED
+
+  @@schema("public")
 }
 
 enum EmployeeDepartment {
@@ -88,6 +111,8 @@ enum EmployeeDepartment {
   IT
   HR
   MARKETING
+
+  @@schema("public")
 }
 
 enum EventType {
@@ -96,12 +121,16 @@ enum EventType {
   ADD_TO_CART
   CHECKOUT_START
   PURCHASE
+
+  @@schema("public")
 }
 
 enum DeviceType {
   DESKTOP
   MOBILE
   TABLET
+
+  @@schema("public")
 }
 
 // ─── Sellers ─────────────────────────────────────────────────────────────────
@@ -125,6 +154,7 @@ model Seller {
   @@index([country])
   @@index([isActive])
   @@map("sellers")
+  @@schema("public")
 }
 
 // ─── Customers ───────────────────────────────────────────────────────────────
@@ -157,6 +187,7 @@ model Customer {
   @@index([referredById])
   @@index([deletedAt])
   @@map("customers")
+  @@schema("public")
 }
 
 // ─── Addresses ───────────────────────────────────────────────────────────────
@@ -179,6 +210,7 @@ model Address {
   @@index([customerId])
   @@index([country])
   @@map("addresses")
+  @@schema("public")
 }
 
 // ─── Categories (self-referencing tree) ──────────────────────────────────────
@@ -194,6 +226,7 @@ model Category {
 
   @@index([parentId])
   @@map("categories")
+  @@schema("public")
 }
 
 // ─── Products ────────────────────────────────────────────────────────────────
@@ -223,6 +256,7 @@ model Product {
   @@index([isPublished])
   @@index([discontinuedAt])
   @@map("products")
+  @@schema("public")
 }
 
 // ─── Product Variants ────────────────────────────────────────────────────────
@@ -245,6 +279,7 @@ model ProductVariant {
   @@index([productId])
   @@index([optionName])
   @@map("product_variants")
+  @@schema("public")
 }
 
 // ─── Suppliers ───────────────────────────────────────────────────────────────
@@ -260,6 +295,7 @@ model Supplier {
 
   @@index([country])
   @@map("suppliers")
+  @@schema("public")
 }
 
 // ─── Product Suppliers (M:N with payload, composite PK) ──────────────────────
@@ -278,6 +314,7 @@ model ProductSupplier {
   @@index([supplierId])
   @@index([isPrimary])
   @@map("product_suppliers")
+  @@schema("public")
 }
 
 // ─── Warehouses ──────────────────────────────────────────────────────────────
@@ -296,6 +333,7 @@ model Warehouse {
 
   @@index([country])
   @@map("warehouses")
+  @@schema("public")
 }
 
 // ─── Inventory (composite PK) ────────────────────────────────────────────────
@@ -314,6 +352,7 @@ model Inventory {
   @@id([variantId, warehouseId])
   @@index([warehouseId])
   @@map("inventory")
+  @@schema("public")
 }
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
@@ -344,6 +383,7 @@ model Order {
   @@index([currency])
   @@index([channel])
   @@map("orders")
+  @@schema("public")
 }
 
 // ─── Order Items (generated column line_total added in raw migration) ────────
@@ -367,6 +407,7 @@ model OrderItem {
   @@index([variantId])
   @@index([sellerId])
   @@map("order_items")
+  @@schema("public")
 }
 
 // ─── Payments (multiple per order — row multiplication trap) ─────────────────
@@ -388,6 +429,7 @@ model Payment {
   @@index([method])
   @@index([paidAt])
   @@map("payments")
+  @@schema("public")
 }
 
 // ─── Shipments ───────────────────────────────────────────────────────────────
@@ -411,6 +453,7 @@ model Shipment {
   @@index([shippedAt])
   @@index([deliveredAt])
   @@map("shipments")
+  @@schema("public")
 }
 
 // ─── Returns ─────────────────────────────────────────────────────────────────
@@ -433,6 +476,7 @@ model Return {
   @@index([status])
   @@index([requestedAt])
   @@map("returns")
+  @@schema("public")
 }
 
 // ─── Coupons ─────────────────────────────────────────────────────────────────
@@ -453,6 +497,7 @@ model Coupon {
   @@index([validFrom])
   @@index([validTo])
   @@map("coupons")
+  @@schema("public")
 }
 
 // ─── Order Coupons (M:N orders <-> coupons) ──────────────────────────────────
@@ -470,6 +515,7 @@ model OrderCoupon {
   @@index([orderId])
   @@index([couponId])
   @@map("order_coupons")
+  @@schema("public")
 }
 
 // ─── Reviews ─────────────────────────────────────────────────────────────────
@@ -493,6 +539,7 @@ model Review {
   @@index([rating])
   @@index([createdAt])
   @@map("reviews")
+  @@schema("public")
 }
 
 // ─── Employees (self-referencing manager chain) ──────────────────────────────
@@ -518,6 +565,7 @@ model Employee {
   @@index([warehouseId])
   @@index([terminatedAt])
   @@map("employees")
+  @@schema("public")
 }
 
 // ─── Carts ───────────────────────────────────────────────────────────────────
@@ -538,6 +586,7 @@ model Cart {
   @@index([createdAt])
   @@index([orderId])
   @@map("carts")
+  @@schema("public")
 }
 
 // ─── Cart Items ──────────────────────────────────────────────────────────────
@@ -555,6 +604,7 @@ model CartItem {
   @@index([cartId])
   @@index([variantId])
   @@map("cart_items")
+  @@schema("public")
 }
 
 // ─── Page View Events (time series, BigInt id) ───────────────────────────────
@@ -581,6 +631,7 @@ model PageViewEvent {
   @@index([occurredAt])
   @@index([device])
   @@map("page_view_events")
+  @@schema("public")
 }
 
 // ─── Exchange Rates (range/non-equi joins) ───────────────────────────────────
@@ -597,6 +648,7 @@ model ExchangeRate {
   @@index([validFrom])
   @@index([validTo])
   @@map("exchange_rates")
+  @@schema("public")
 }
 
 // ─── Daily Sales Snapshots (pre-aggregated for comparison) ───────────────────
@@ -616,4 +668,83 @@ model DailySalesSnapshot {
   @@index([sellerId])
   @@index([snapshotDate])
   @@map("daily_sales_snapshots")
+  @@schema("public")
+}
+
+// ─── Challenges (lab schema — invisible to the read-only role) ───────────────
+
+enum ChallengeLevel {
+  BEGINNER
+  MID_LEVEL
+  SENIOR
+  EXPERT
+
+  @@schema("lab")
+}
+
+enum ChallengeStatus {
+  ATTEMPTED
+  SOLVED
+
+  @@schema("lab")
+}
+
+model Challenge {
+  id            Int             @id @default(autoincrement())
+  slug          String          @unique
+  title         String
+  level         ChallengeLevel
+  orderIndex    Int             @map("order_index")
+  /// Task statement shown to the user (plain text / light markdown, English).
+  prompt        String
+  /// Optional starter query loaded into the bound console.
+  starterSql    String?         @map("starter_sql")
+  /// Reference solution — NEVER sent to the client except via the reveal endpoint.
+  solutionSql   String          @map("solution_sql")
+  /// When true, row order is part of correctness.
+  orderMatters  Boolean         @default(false) @map("order_matters")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  hints         ChallengeHint[]
+  progress      ChallengeProgress?
+
+  @@unique([level, orderIndex])
+  @@index([level])
+  @@map("challenges")
+  @@schema("lab")
+}
+
+model ChallengeHint {
+  id           Int       @id @default(autoincrement())
+  challengeId  Int       @map("challenge_id")
+  position     Int
+  text         String
+
+  challenge    Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade, map: "fk_hint_challenge")
+
+  @@unique([challengeId, position])
+  @@index([challengeId])
+  @@map("challenge_hints")
+  @@schema("lab")
+}
+
+/// Single-user global progress: at most one row per challenge.
+model ChallengeProgress {
+  id                Int             @id @default(autoincrement())
+  challengeId       Int             @unique @map("challenge_id")
+  status            ChallengeStatus
+  attempts          Int             @default(0)
+  lastSql           String?         @map("last_sql")
+  lastLanguage      String?         @map("last_language")
+  solvedAt          DateTime?       @map("solved_at")
+  revealedResult    Boolean         @default(false) @map("revealed_result")
+  revealedHints     Int             @default(0) @map("revealed_hints")
+  revealedSolution  Boolean         @default(false) @map("revealed_solution")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  challenge         Challenge       @relation(fields: [challengeId], references: [id], onDelete: Cascade, map: "fk_progress_challenge")
+
+  @@map("challenge_progress")
+  @@schema("lab")
 }

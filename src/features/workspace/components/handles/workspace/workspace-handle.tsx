@@ -58,11 +58,20 @@ export function WorkspaceHandle() {
     });
   }
 
+  async function handleAddChallenges() {
+    addTab(store.model, store.layoutApi, {
+      type: "tab",
+      name: "Challenges",
+      component: "challenges",
+    });
+  }
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: handlers close over the store and only need to register once
   useEffect(() => {
     const disposes = [
       command.handle("workspace.addQueryConsole", handleAddQueryConsole),
       command.handle("workspace.addSchemaExplorer", handleAddSchemaExplorer),
+      command.handle("workspace.addChallenges", handleAddChallenges),
     ];
 
     return () => {

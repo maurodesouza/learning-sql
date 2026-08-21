@@ -24,6 +24,11 @@ export const INITIAL_MODEL: IJsonModel = {
             name: "Schema",
             component: "schemaExplorer",
           },
+          {
+            type: "tab",
+            name: "Challenges",
+            component: "challenges",
+          },
         ],
       },
       {

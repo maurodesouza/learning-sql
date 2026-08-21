@@ -12,10 +12,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - **Database**: `docker compose up -d` (start Postgres 18), `docker compose down -v` (reset volume)
 - **Migrations**: `pnpm db:migrate` (dev), `pnpm db:deploy` (apply), `pnpm db:generate` (client)
-- **Seed/reset**: `pnpm db:seed`, `pnpm db:reset`, `pnpm db:truncate`, `pnpm db:refresh`
+- **Seed/reset**: `pnpm db:seed`, `pnpm db:reset`, `pnpm db:truncate`, `pnpm db:refresh`, `pnpm db:seed:challenges` (challenges only)
 - **Dev**: `pnpm dev` (Next.js), `pnpm build`, `pnpm start`
 - **Quality**: `pnpm lint` (Biome), `pnpm format` (Biome write), `pnpm typecheck` (tsc --noEmit), `pnpm test` (Vitest)
-- **Validation**: `pnpm validate:examples` (runs every catalog query against the seeded DB)
-- **Prisma 7**: config in `prisma.config.ts` (no `package.json#prisma`); generator `prisma-client` with `output = ../src/generated/prisma`; driver adapter `@prisma/adapter-pg`; generated client is git-ignored and excluded from Biome.
-- **Read-only DB access**: the query console uses `pg` directly with the `sql_lab_readonly` role — never Prisma. Prisma is for schema/migrations/seed only.
+- **Validation**: `pnpm validate:examples` (catalog queries), `pnpm validate:challenges` (challenge solutions), `pnpm validate` (both)
+- **Prisma 7**: config in `prisma.config.ts` (no `package.json#prisma`); generator `prisma-client` with `output = ../src/generated/prisma`; driver adapter `@prisma/adapter-pg`; generated client is git-ignored and excluded from Biome. Multi-schema: `schemas = ["public", "lab"]` — marketplace data in `public`, challenges in `lab`.
+- **Read-only DB access**: the query console uses `pg` directly with the `sql_lab_readonly` role — never Prisma. Prisma is for schema/migrations/seed AND for runtime access to app-owned data (challenges, hints, progress) in the `lab` schema, which is locked down from the read-only role.
 

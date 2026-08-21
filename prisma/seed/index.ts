@@ -9,6 +9,7 @@
 
 import { seedCarts } from "./carts";
 import { fetchIds, seedCatalog, seedCategories } from "./catalog";
+import { seedChallenges } from "./challenges";
 import { seedAddresses, seedCustomers, seedEmployees } from "./customers";
 import { closePool, query } from "./db";
 import { seedEvents } from "./events";
@@ -98,6 +99,10 @@ async function main(): Promise<void> {
   // ─── Sanity assertions ─────────────────────────────────────────────────
   console.log("Phase 8: Sanity checks");
   await sanityCheck();
+
+  // ─── Challenges (lab schema, upserted by slug) ─────────────────────────
+  console.log();
+  await seedChallenges();
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log();
