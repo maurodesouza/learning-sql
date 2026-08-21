@@ -49,7 +49,10 @@ export const ExamplePicker = observer(function ExamplePicker() {
                 key={query.id}
                 type="button"
                 onClick={() => {
-                  actions.queryConsole.selectExample(query, { instanceId });
+                  actions.queryConsole.editor.sql(
+                    { template: query.sql, activatePanel: true },
+                    { instanceId },
+                  );
                   setOpen(false);
                 }}
                 className="flex w-full flex-col gap-1 rounded p-2 text-left text-sm hover:bg-accent"

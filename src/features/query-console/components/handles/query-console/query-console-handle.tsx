@@ -9,9 +9,9 @@ import {
   isPrqlCompileSuccess,
 } from "#/lib/prql/client";
 import { isQueryError, isQuerySuccess, runQuery } from "#/lib/sql/client";
-import type { ExampleQuery } from "#/lib/sql/examples";
 import type { QueryLanguage } from "#/lib/sql/types";
 import { useQueryConsoleStore } from "../../../context/query-console-context";
+import type { UpdateEditorTemplatePayload } from "./query-console-actions";
 
 export function QueryConsoleHandle() {
   const store = useQueryConsoleStore();
@@ -78,26 +78,18 @@ export function QueryConsoleHandle() {
     }
   }
 
-  async function handleSetSql(payload: string) {
-    store.setSql(payload);
+  async function handleEditorSql(payload: UpdateEditorTemplatePayload) {
+    store.setSql(payload.template);
+    if (payload.activatePanel) store.setActivePane("sql");
   }
 
-  async function handleSetPrql(payload: string) {
-    store.setPrql(payload);
+  async function handleEditorPrql(payload: UpdateEditorTemplatePayload) {
+    store.setPrql(payload.template);
+    if (payload.activatePanel) store.setActivePane("prql");
   }
 
-  async function handleSetActivePane(payload: QueryLanguage) {
+  async function handleEditorActivate(payload: QueryLanguage) {
     store.setActivePane(payload);
-  }
-
-  async function handleSelectTable(payload: string) {
-    store.setSql(`SELECT * FROM ${payload} LIMIT 10;`);
-    store.setActivePane("sql");
-  }
-
-  async function handleSelectExample(payload: ExampleQuery) {
-    store.setSql(payload.sql);
-    store.setActivePane("sql");
   }
 
   async function handleDownload() {
@@ -135,12 +127,14 @@ export function QueryConsoleHandle() {
     const disposes = [
       command.handle("queryConsole.run", handleRun, config),
       command.handle("queryConsole.transform", handleTransform, config),
-      command.handle("queryConsole.setSql", handleSetSql, config),
-      command.handle("queryConsole.setPrql", handleSetPrql, config),
-      command.handle("queryConsole.setActivePane", handleSetActivePane, config),
-      command.handle("queryConsole.selectTable", handleSelectTable, config),
-      command.handle("queryConsole.selectExample", handleSelectExample, config),
       command.handle("queryConsole.download", handleDownload, config),
+      command.handle("queryConsole.editor.sql", handleEditorSql, config),
+      command.handle("queryConsole.editor.prql", handleEditorPrql, config),
+      command.handle(
+        "queryConsole.editor.activate",
+        handleEditorActivate,
+        config,
+      ),
     ];
 
     return () => {

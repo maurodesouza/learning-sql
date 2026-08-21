@@ -165,6 +165,7 @@ export const CodeEditor = observer(function CodeEditor({
       }),
     disabled,
   });
+
   handlers.current = {
     onRun: () =>
       actions.queryConsole.run(undefined, {
@@ -226,14 +227,13 @@ export const CodeEditor = observer(function CodeEditor({
     <CodeMirror
       value={value}
       onChange={(val) => {
-        if (language === "prql") {
-          actions.queryConsole.setPrql(val, { instanceId });
-        } else {
-          actions.queryConsole.setSql(val, { instanceId });
-        }
+        actions.queryConsole.editor[language](
+          { template: val },
+          { instanceId },
+        );
       }}
       onFocus={() => {
-        actions.queryConsole.setActivePane(language, { instanceId });
+        actions.queryConsole.editor.activate(language, { instanceId });
       }}
       extensions={extensions}
       basicSetup={BASIC_SETUP}
