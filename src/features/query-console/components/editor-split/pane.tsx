@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react-lite";
 import type { QueryLanguage } from "#/lib/sql/types";
 import { useQueryConsoleStore } from "../../context/query-console-context";
 
@@ -9,7 +10,11 @@ export interface PaneProps {
   children: React.ReactNode;
 }
 
-export function Pane({ language, header, children }: PaneProps) {
+export const Pane = observer(function Pane({
+  language,
+  header,
+  children,
+}: PaneProps) {
   const store = useQueryConsoleStore();
   const active = store.activePane === language;
 
@@ -23,4 +28,4 @@ export function Pane({ language, header, children }: PaneProps) {
       <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
     </section>
   );
-}
+});
