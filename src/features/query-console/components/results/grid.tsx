@@ -84,7 +84,7 @@ export const Grid = observer(function Grid() {
     <DataGrid
       columns={columns}
       rows={rows}
-      className="rdg-light h-full fill-grid"
+      className="rdg-light h-full block-full!"
       rowKeyGetter={(row: Row) => row._id}
     />
   );
