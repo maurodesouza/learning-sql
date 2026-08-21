@@ -14,7 +14,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import CodeMirror from "@uiw/react-codemirror";
 import { observer } from "mobx-react-lite";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { schemaStore } from "#/features/schema-explorer/stores/schema-store";
 import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
@@ -136,6 +136,26 @@ export const CodeEditor = observer(function CodeEditor({
 
   const value = language === "prql" ? store.prql : store.sql;
   const disabled = useTransition(["queryConsole.run", instanceId]);
+  const editorViewRef = useRef<EditorView | null>(null);
+  const wasRunningRef = useRef(false);
+  const wasActiveRef = useRef(store.activePane === language);
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    if (wasRunningRef.current && !disabled) {
+      editorViewRef.current?.focus();
+    }
+    wasRunningRef.current = disabled;
+  }, [disabled]);
+
+  useEffect(() => {
+    const isActive = store.activePane === language;
+    if (didMountRef.current && isActive && !wasActiveRef.current) {
+      editorViewRef.current?.focus();
+    }
+    wasActiveRef.current = isActive;
+    didMountRef.current = true;
+  }, [language, store.activePane]);
 
   const languageExtension = useMemo(
     () =>
@@ -248,6 +268,9 @@ export const CodeEditor = observer(function CodeEditor({
       }}
       extensions={extensions}
       basicSetup={BASIC_SETUP}
+      onCreateEditor={(view) => {
+        editorViewRef.current = view;
+      }}
       editable={!disabled}
       readOnly={disabled}
       placeholder={placeholder}
