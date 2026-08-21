@@ -279,3 +279,32 @@ Use this checklist to track your progress. Each item links to an example in the 
 - [ ] Correlated subquery
 - [ ] Rolling average with window functions
 - [ ] Funnel analysis with conversion rates
+
+## Challenges
+
+The Challenges tab (Trophy icon in the side menu) provides 27 graded SQL exercises
+that auto-check your answer against a reference solution.
+
+### How it works
+
+1. **Open the Challenges tab** — click the Trophy icon in the left side menu, or switch
+   to the Challenges tab in the left panel.
+2. **Bind a query console** — use the console picker in the challenge detail view to
+   select which Query Console tab to bind. If only one console is open, it auto-binds.
+3. **Read the prompt** — each challenge states the required column names and the task.
+4. **Write your query** — type it in the bound Query Console. You can press Run to see
+   your results, or go straight to Check.
+5. **Check your answer** — click "Check Answer" to compare your result against the
+   reference solution. The comparison is server-side: column names, row count, and
+   cell values are all verified (order-sensitive when `order_matters` is true).
+6. **Reveal if stuck** — three progressive reveals: expected result table, hints
+   (one at a time), and the solution SQL (two-click confirmation).
+
+### Levels and concept mapping
+
+| Level | Challenges | Concepts covered |
+|---|---|---|
+| Beginner (8) | SELECT, WHERE, ORDER BY, LIMIT, NULL, DISTINCT, JOIN | Basic querying, filtering, simple joins |
+| Mid-Level (8) | Aggregation, GROUP BY/HAVING, window functions, CTEs, jsonb, dates | GROUP BY depth, ROW_NUMBER, recursive CTE, jsonb extraction |
+| Senior (6) | Running totals, cohorts, row-multiplication traps, range joins, FTS, percentiles | Analytics patterns, fan-out traps, non-equi joins, full-text search |
+| Expert (5) | Gaps-and-islands, funnels, snapshot reconciliation, rolling windows, LATERAL | Advanced window frames, set-vs-set comparison, LATERAL joins |

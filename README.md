@@ -15,6 +15,7 @@ on the server, so you see both languages side by side — the fastest way to lea
 - **Schema explorer** — browse tables, columns, primary/foreign keys, and enum types; click a table to copy its `SELECT` to the clipboard
 - **Multi-instance workspace** — dockable/resizable tabs (`flexlayout-react`) host any number of independent Query Console and Schema Explorer panels
 - **28 example queries** from beginner to advanced, all validated against the dataset
+- **27 SQL challenges** across 4 levels (beginner → expert) with server-side auto-correction, hints, and solution reveal
 - **Learning guide** with a concept checklist ([docs/learning-guide.md](docs/learning-guide.md))
 
 ## Prerequisites

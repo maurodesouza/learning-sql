@@ -106,3 +106,23 @@ because Prisma cannot model them:
   contiguous date ranges for range/non-equi join practice.
 - **`daily_sales_snapshots`** is derived from orders (aggregated in the seed), so comparing
   it against a live aggregation matches exactly.
+
+## Challenges (schema `lab`)
+
+> **Not part of the marketplace practice data.** The `lab` schema stores the Challenges
+> feature's content and progress. It is invisible to the `sql_lab_readonly` role used by
+> the query console — spoiler containment so users cannot `SELECT` from `lab.challenges`
+> to read reference solutions.
+
+| Table | Purpose |
+|---|---|
+| `lab.challenges` | 27 curated exercises (slug, title, level, prompt, starter SQL, solution SQL, order_matters) |
+| `lab.challenge_hints` | Progressive hints per challenge (position-ordered) |
+| `lab.challenge_progress` | Single-user progress (attempts, status, revealed flags) |
+
+Two enums: `lab.ChallengeLevel` (BEGINNER, MID_LEVEL, SENIOR, EXPERT) and
+`lab.ChallengeStatus` (ATTEMPTED, SOLVED).
+
+Access: Prisma (owner connection) reads/writes the `lab` schema at runtime. The
+read-only `pg` pool used by the query console has `REVOKE ALL ON SCHEMA lab` and
+cannot even name the tables.
