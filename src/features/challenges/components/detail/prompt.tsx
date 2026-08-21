@@ -10,7 +10,7 @@ export const Prompt = observer(function Prompt() {
   if (!challenge) return null;
 
   return (
-    <ScrollArea className="max-h-48 shrink-0">
+    <ScrollArea className="h-48 shrink-0 overflow-hidden">
       <div className="whitespace-pre-wrap p-3 text-sm leading-relaxed">
         {challenge.prompt}
       </div>
