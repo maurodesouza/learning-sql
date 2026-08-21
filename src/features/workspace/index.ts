@@ -1,1 +1,2 @@
-export { Workspace } from "./components/workspace";
+export { Workspace } from "./components";
+export { useWorkspaceStore } from "./context/workspace-context";
