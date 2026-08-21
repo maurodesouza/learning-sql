@@ -92,6 +92,10 @@ export function QueryConsoleHandle() {
     store.setActivePane(payload);
   }
 
+  async function handleEditorToggle() {
+    store.setActivePane(store.activePane === "sql" ? "prql" : "sql");
+  }
+
   async function handleDownload() {
     const result = store.result;
     if (!result || !isQuerySuccess(result)) return;
@@ -135,6 +139,7 @@ export function QueryConsoleHandle() {
         handleEditorActivate,
         config,
       ),
+      command.handle("queryConsole.editor.toggle", handleEditorToggle, config),
     ];
 
     return () => {

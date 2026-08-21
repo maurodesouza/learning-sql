@@ -163,6 +163,8 @@ export const CodeEditor = observer(function CodeEditor({
         instanceId,
         transition: ["queryConsole.transform", instanceId],
       }),
+    onToggle: () =>
+      actions.queryConsole.editor.toggle(undefined, { instanceId }),
     disabled,
   });
 
@@ -177,6 +179,8 @@ export const CodeEditor = observer(function CodeEditor({
         instanceId,
         transition: ["queryConsole.transform", instanceId],
       }),
+    onToggle: () =>
+      actions.queryConsole.editor.toggle(undefined, { instanceId }),
     disabled,
   };
 
@@ -204,6 +208,13 @@ export const CodeEditor = observer(function CodeEditor({
               const { onTransform: transform, disabled: busy } =
                 handlers.current;
               if (!busy) transform();
+              return true;
+            },
+          },
+          {
+            key: "Mod-Shift-Enter",
+            run: () => {
+              handlers.current.onToggle();
               return true;
             },
           },

@@ -14,6 +14,7 @@ declare module "#/lib/command/global" {
 
       editor: {
         activate: ScopedAction<QueryLanguage>;
+        toggle: ScopedAction;
         sql: ScopedAction<UpdateEditorTemplatePayload>;
         prql: ScopedAction<UpdateEditorTemplatePayload>;
       };
