@@ -11,7 +11,10 @@ import {
 import { isQueryError, isQuerySuccess, runQuery } from "#/lib/sql/client";
 import type { QueryLanguage } from "#/lib/sql/types";
 import { useQueryConsoleStore } from "../../../context/query-console-context";
-import type { UpdateEditorTemplatePayload } from "./query-console-actions";
+import type {
+  QueryConsoleSource,
+  UpdateEditorTemplatePayload,
+} from "./query-console-actions";
 
 export function QueryConsoleHandle() {
   const store = useQueryConsoleStore();
@@ -96,6 +99,11 @@ export function QueryConsoleHandle() {
     store.setActivePane(store.activePane === "sql" ? "prql" : "sql");
   }
 
+  async function handleGetSource(): Promise<QueryConsoleSource> {
+    const language = store.activePane;
+    return { language, source: language === "prql" ? store.prql : store.sql };
+  }
+
   async function handleDownload() {
     const result = store.result;
     if (!result || !isQuerySuccess(result)) return;
@@ -127,11 +135,15 @@ export function QueryConsoleHandle() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: handlers close over the memoized store and only need to register once per instance
   useEffect(() => {
-    const config = { instanceId };
+    const config = {
+      instanceId,
+      meta: { label: `Console ${instanceId.replace("console-", "")}` },
+    };
     const disposes = [
       command.handle("queryConsole.run", handleRun, config),
       command.handle("queryConsole.transform", handleTransform, config),
       command.handle("queryConsole.download", handleDownload, config),
+      command.handle("queryConsole.getSource", handleGetSource, config),
       command.handle("queryConsole.editor.sql", handleEditorSql, config),
       command.handle("queryConsole.editor.prql", handleEditorPrql, config),
       command.handle(

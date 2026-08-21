@@ -5,12 +5,19 @@ export type UpdateEditorTemplatePayload = {
   template: string;
   activatePanel?: boolean;
 };
+
+export interface QueryConsoleSource {
+  language: QueryLanguage;
+  source: string;
+}
+
 declare module "#/lib/command/global" {
   interface Actions {
     queryConsole: {
       run: ScopedAction;
       transform: ScopedAction;
       download: ScopedAction;
+      getSource: ScopedAction<undefined, QueryConsoleSource>;
 
       editor: {
         activate: ScopedAction<QueryLanguage>;

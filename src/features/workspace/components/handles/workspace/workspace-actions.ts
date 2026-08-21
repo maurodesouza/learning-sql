@@ -5,6 +5,7 @@ declare module "#/lib/command/global" {
     workspace: {
       addQueryConsole: Action;
       addSchemaExplorer: Action;
+      addChallenges: Action;
     };
   }
 }
