@@ -15,11 +15,11 @@ import { tags } from "@lezer/highlight";
 import CodeMirror from "@uiw/react-codemirror";
 import { observer } from "mobx-react-lite";
 import { useMemo, useRef } from "react";
+import { schemaStore } from "#/features/schema-explorer/stores/schema-store";
 import { useTransition } from "#/hooks/use-transition";
 import { actions } from "#/lib/command";
 import { prql } from "#/lib/prql/codemirror";
 import type { QueryLanguage } from "#/lib/sql/types";
-import { schemaStore } from "#/stores/schema-store";
 import { useQueryConsoleStore } from "../../context/query-console-context";
 
 /**

@@ -1,1 +1,2 @@
-export { SchemaExplorer } from "./components/schema-explorer";
+export { SchemaExplorer } from "./components";
+export { useSchemaStore } from "./context/schema-explorer-context";
