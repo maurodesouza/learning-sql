@@ -5,7 +5,6 @@ import { useMemo } from "react";
 import { type Column, DataGrid } from "react-data-grid";
 import type { QuerySuccess } from "#/lib/sql/types";
 import { useQueryConsoleStore } from "../../context/query-console-context";
-import { ResultsGridHeader } from "../molecules/results-grid-header";
 
 function formatCell(value: unknown): string {
   if (value === null) return "NULL";
@@ -20,7 +19,7 @@ interface Row {
   [key: string]: string;
 }
 
-export const ResultsGrid = observer(function ResultsGrid() {
+export const Grid = observer(function Grid() {
   const store = useQueryConsoleStore();
   const result = store.result;
 
@@ -73,23 +72,20 @@ export const ResultsGrid = observer(function ResultsGrid() {
 
   if (!successResult) return null;
 
-  return (
-    <div className="flex h-full flex-col">
-      <ResultsGridHeader result={successResult} />
-      <div className="flex-1 overflow-hidden">
-        {rows.length > 0 ? (
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            className="rdg-light h-full fill-grid"
-            rowKeyGetter={(row: Row) => row._id}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            No rows returned
-          </div>
-        )}
+  if (rows.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        No rows returned
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <DataGrid
+      columns={columns}
+      rows={rows}
+      className="rdg-light h-full fill-grid"
+      rowKeyGetter={(row: Row) => row._id}
+    />
   );
 });

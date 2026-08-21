@@ -1,4 +1,6 @@
-interface PaneHeaderProps {
+"use client";
+
+export interface PaneHeaderProps {
   label: string;
   action?: React.ReactNode;
   shortcut: string;

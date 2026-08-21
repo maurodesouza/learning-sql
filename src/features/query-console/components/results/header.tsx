@@ -2,15 +2,14 @@
 
 import { observer } from "mobx-react-lite";
 import { Badge } from "#/components/atoms/badge";
-import type { QuerySuccess } from "#/lib/sql/types";
+import { useQueryConsoleStore } from "../../context/query-console-context";
 
-interface ResultsGridHeaderProps {
-  result: QuerySuccess;
-}
+export const Header = observer(function Header() {
+  const store = useQueryConsoleStore();
+  const result = store.result;
 
-export const ResultsGridHeader = observer(function ResultsGridHeader({
-  result,
-}: ResultsGridHeaderProps) {
+  if (!result || "error" in result) return null;
+
   return (
     <div className="flex items-center gap-2 border-b px-3 py-1.5 text-xs text-muted-foreground">
       <span>{result.rowCount} rows</span>

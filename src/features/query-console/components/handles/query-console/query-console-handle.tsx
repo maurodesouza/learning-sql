@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { command } from "#/lib/command";
 import {
@@ -11,19 +11,11 @@ import {
 import { isQueryError, isQuerySuccess, runQuery } from "#/lib/sql/client";
 import type { ExampleQuery } from "#/lib/sql/examples";
 import type { QueryLanguage } from "#/lib/sql/types";
-import { QueryConsoleContext } from "../../../context/query-console-context";
-import { QueryConsoleStore } from "../../../stores/query-console-store";
+import { useQueryConsoleStore } from "../../../context/query-console-context";
 
-interface QueryConsoleHandleProps {
-  instanceId: string;
-  children: React.ReactNode;
-}
-
-export function QueryConsoleHandle({
-  instanceId,
-  children,
-}: QueryConsoleHandleProps) {
-  const store = useMemo(() => new QueryConsoleStore(instanceId), [instanceId]);
+export function QueryConsoleHandle() {
+  const store = useQueryConsoleStore();
+  const { instanceId } = store;
   const runningRef = useRef(false);
   const transformingRef = useRef(false);
 
@@ -156,9 +148,5 @@ export function QueryConsoleHandle({
     };
   }, [instanceId]);
 
-  return (
-    <QueryConsoleContext.Provider value={store}>
-      {children}
-    </QueryConsoleContext.Provider>
-  );
+  return null;
 }
