@@ -17,7 +17,6 @@ export const DownloadButton = observer(function DownloadButton() {
       variant="ghost"
       size="sm"
       onClick={() => actions.queryConsole.download(undefined, { instanceId })}
-      className="ml-auto"
     >
       <Download className="h-4 w-4" />
       CSV

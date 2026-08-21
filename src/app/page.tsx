@@ -14,9 +14,9 @@ function QueryConsoleContent() {
   return (
     <QueryConsole.Container>
       <QueryConsole.Toolbar.Container>
-        <QueryConsole.Toolbar.RunButton />
-        <QueryConsole.Toolbar.ShortcutHint />
         <QueryConsole.Toolbar.ExamplePicker />
+        <QueryConsole.Toolbar.ShortcutHint />
+        <QueryConsole.Toolbar.RunButton />
         <QueryConsole.Toolbar.DownloadButton />
       </QueryConsole.Toolbar.Container>
       <QueryConsole.EditorSplit.Container>
