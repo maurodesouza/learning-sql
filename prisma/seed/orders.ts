@@ -233,7 +233,7 @@ export async function seedOrders(
 
   // Fill in seller_id
   for (const row of orderItemRows) {
-    const variantId = row[2] as number;
+    const variantId = row[1] as number; // row[1] = variant_id; row[2] is the seller_id placeholder
     row[2] = sellerMap.get(variantId) ?? sellerIds[0];
   }
 
